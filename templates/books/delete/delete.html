@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>書籍削除</title>
+</head>
+<body>
+    <h1>書籍削除</h1>
+    <p>この書籍を削除してもよろしいですか？</p>
+
+    <form action="/books/{{ book_id }}" method="post">
+        <input type="hidden" name="_method" value="delete">
+        <input type="submit" value="削除">
+    </form>
+</body>
+</html>

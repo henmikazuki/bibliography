@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>書籍登録</title>
+</head>
+<body>
+    <h1>書籍登録</h1>
+    <form action="/books" method="post">
+        <label for="title">タイトル:</label>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="category">カテゴリー:</label>
+        <input type="text" id="category" name="category"><br><br>
+
+        <label for="status">ステータス:</label>
+        <input type="text" id="status" name="status"><br><br>
+
+        <label for="purchase_date">購入日:</label>
+        <input type="date" id="purchase_date" name="purchase_date"><br><br>
+
+        <label for="completion_date">読了日:</label>
+        <input type="date" id="completion_date" name="completion_date"><br><br>
+
+        <input type="submit" value="登録">
+    </form>
+</body>
+</html>
