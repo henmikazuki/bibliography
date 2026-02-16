@@ -7,6 +7,9 @@
 </head>
 <body>
     <h1>書籍一覧</h1>
+    {% if not books %}
+        <p>登録されている書籍はありません。</p>
+    {% else %}
     <table>
         <thead>
             <tr>
@@ -18,28 +21,17 @@
             </tr>
         </thead>
         <tbody>
+            {% for book in books %}
             <tr>
-                <td>テストタイトル</td>
-                <td>テストカテゴリー</td>
-                <td>テストステータス</td>
-                <td>テスト購入日</td>
-                <td>テスト読了日</td>
+                <td>{{ book[1] }}</td>
+                <td>{{ book[2] }}</td>
+                <td>{{ book[3] }}</td>
+                <td>{{ book[4] }}</td>
+                <td>{{ book[5] }}</td>
             </tr>
-            <tr>
-                <td>テストタイトル</td>
-                <td>テストカテゴリー</td>
-                <td>テストステータス</td>
-                <td>テスト購入日</td>
-                <td>テスト読了日</td>
-            </tr>
-            <tr>
-                <td>テストタイトル</td>
-                <td>テストカテゴリー</td>
-                <td>テストステータス</td>
-                <td>テスト購入日</td>
-                <td>テスト読了日</td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </body>
 </html>
