@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>書籍登録確認</title>
+  </head>
+  <body>
+    <h1>書籍登録確認</h1>
+    <p>以下の内容で書籍を登録します。よろしいですか？</p>
+    <ul>
+      <li><strong>タイトル:</strong> {{ book_data.title }}</li>
+      <li><strong>カテゴリー:</strong> {{ book_data.category }}</li>
+      <li><strong>ステータス:</strong> {{ book_data.status }}</li>
+      <li>
+        <strong>購入日:</strong>
+        {% if book_data.purchase_date %} {{ book_data.purchase_date }} {% else
+        %} なし {% endif %}
+      </li>
+      <li>
+        <strong>読了日:</strong>
+        {% if book_data.read_date %} {{ book_data.read_date }} {% else %} なし
+        {% endif %}
+      </li>
+    </ul>
+    <form action="/books/new/confirm" method="post">
+      <input type="hidden" name="title" value="{{ book_data.title }}" />
+      <input type="hidden" name="category" value="{{ book_data.category }}" />
+      <input type="hidden" name="status" value="{{ book_data.status }}" />
+      <input
+        type="hidden"
+        name="purchase_date"
+        value="{{ book_data.purchase_date }}"
+      />
+      <input type="hidden" name="read_date" value="{{ book_data.read_date }}" />
+      <input type="submit" value="登録" />
+    </form>
+  </body>
+</html>
