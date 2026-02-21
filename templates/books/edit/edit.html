@@ -1,65 +1,58 @@
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>書籍編集</title>
-  </head>
-  <body>
-    <h1>書籍編集</h1>
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <ul>
-      {% for message in messages %}
-      <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %}
-    <p>※は必須項目です。</p>
-    <form action="/books/{{ book[0] }}/edit" method="post">
-      <label for="title">※タイトル:</label>
-      <input
-        type="text"
-        id="title"
-        name="title"
-        value="{{ book[1] }}"
-        required
-      /><br /><br />
+{% extends "books/base.html" %} {% block title %}書籍編集{% endblock %} {% block
+content %}
+<h1>書籍編集</h1>
+{% with messages = get_flashed_messages() %} {% if messages %}
+<ul>
+  {% for message in messages %}
+  <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %}
+<p>※は必須項目です。</p>
+<form action="/books/{{ book[0] }}/edit" method="post">
+  <label for="title">※タイトル:</label>
+  <input
+    type="text"
+    id="title"
+    name="title"
+    value="{{ book[1] }}"
+    required
+  /><br /><br />
 
-      <label for="category">※カテゴリー:</label>
-      <input
-        type="text"
-        id="category"
-        name="category"
-        value="{{ book[2] }}"
-        required
-      /><br /><br />
+  <label for="category">※カテゴリー:</label>
+  <input
+    type="text"
+    id="category"
+    name="category"
+    value="{{ book[2] }}"
+    required
+  /><br /><br />
 
-      <label for="status">※ステータス:</label>
-      <input
-        type="text"
-        id="status"
-        name="status"
-        value="{{ book[3] }}"
-        required
-      /><br /><br />
+  <label for="status">※ステータス:</label>
+  <input
+    type="text"
+    id="status"
+    name="status"
+    value="{{ book[3] }}"
+    required
+  /><br /><br />
 
-      <label for="purchase_date">購入日:</label>
-      <input
-        type="date"
-        id="purchase_date"
-        name="purchase_date"
-        value="{{ book[4] }}"
-      /><br /><br />
+  <label for="purchase_date">購入日:</label>
+  <input
+    type="date"
+    id="purchase_date"
+    name="purchase_date"
+    value="{{ book[4] }}"
+  /><br /><br />
 
-      <label for="completion_date">読了日:</label>
-      <input
-        type="date"
-        id="completion_date"
-        name="completion_date"
-        value="{{ book[5] }}"
-      /><br /><br />
+  <label for="completion_date">読了日:</label>
+  <input
+    type="date"
+    id="completion_date"
+    name="completion_date"
+    value="{{ book[5] }}"
+  /><br /><br />
 
-      <input type="submit" value="更新" />
-    </form>
-  </body>
-</html>
+  <input type="submit" value="更新" />
+</form>
+{% endblock %}
