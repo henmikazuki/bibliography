@@ -168,9 +168,39 @@ def confirm_edit_book(book_id):
         return redirect(f"/books/{book_id}/edit")
 
 
-@app.route("/books/<int:book_id>/delete")
+@app.route("/books/<int:book_id>/delete", methods=["GET", "POST"])
 def delete_book(book_id):
-    return render_template("books/delete/delete.html")
+    con, csr = db_connection()
+    if request.method == "POST":
+        sql = (
+            "UPDATE books SET deleted = 1, updated_at = datetime('now', 'localtime') "
+            "WHERE id = ?"
+        )
+        csr.execute(sql, (book_id,))
+        con.commit()
+        con.close()
+
+        flash("書籍を削除しました。")
+
+        return redirect("/books")
+    if request.method == "GET":
+        sql = (
+            "SELECT id, title, category, status, purchase_date, read_date "
+            "FROM books WHERE id = ?"
+        )
+        csr.execute(sql, (book_id,))
+        book = csr.fetchone()
+        book_data = {
+            "title": book[1],
+            "category": book[2],
+            "status": book[3],
+            "purchase_date": book[4],
+            "read_date": book[5],
+        }
+        con.close()
+        return render_template(
+            "books/delete/delete.html", book_data=book_data, book_id=book_id
+        )
 
 
 if __name__ == "__main__":

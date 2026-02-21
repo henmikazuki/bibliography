@@ -1,17 +1,25 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>書籍削除</title>
-</head>
-<body>
-    <h1>書籍削除</h1>
-    <p>この書籍を削除してもよろしいですか？</p>
+{% extends "books/base.html" %} {% block title %}書籍削除{% endblock %} {% block
+content %}
+<h1>書籍削除</h1>
+<p>この書籍を削除してもよろしいですか？</p>
+<ul>
+  <li><strong>タイトル:</strong> {{ book_data.title }}</li>
+  <li><strong>カテゴリー:</strong> {{ book_data.category }}</li>
+  <li><strong>ステータス:</strong> {{ book_data.status }}</li>
+  <li>
+    <strong>購入日:</strong>
+    {% if book_data.purchase_date %} {{ book_data.purchase_date }} {% else %}
+    なし {% endif %}
+  </li>
+  <li>
+    <strong>読了日:</strong>
+    {% if book_data.read_date %} {{ book_data.read_date }} {% else %} なし {%
+    endif %}
+  </li>
+</ul>
 
-    <form action="/books/{{ book_id }}" method="post">
-        <input type="hidden" name="_method" value="delete">
-        <input type="submit" value="削除">
-    </form>
-</body>
-</html>
+<form action="/books/{{ book_id }}/delete" method="post">
+  <input type="hidden" name="book_id" value="{{ book_id }}" />
+  <input type="submit" value="削除" />
+</form>
+{% endblock %}
