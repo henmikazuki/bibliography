@@ -92,7 +92,7 @@ def new_book():
             flash("タイトル、カテゴリー、ステータスは必須項目です。")
             return redirect("/books/new")
 
-        return render_template("books/new/confirm.html", book_data=book_data)
+        return render_template("books/confirm.html", book_data=book_data, mode="create")
     if request.method == "GET":
         return render_template("books/new/registration.html")
 
@@ -132,7 +132,7 @@ def edit_book(book_id):
             return redirect(f"/books/{book_id}/edit")
 
         return render_template(
-            "books/edit/confirm.html", book_data=book_data, book_id=book_id
+            "books/confirm.html", book_data=book_data, book_id=book_id, mode="update"
         )
     if request.method == "GET":
         con, csr = db_connection()
