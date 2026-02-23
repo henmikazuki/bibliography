@@ -17,7 +17,12 @@ content %}
   <input type="text" id="category" name="category" required /><br /><br />
 
   <label for="status">※ステータス:</label>
-  <input type="text" id="status" name="status" required /><br /><br />
+  <select name="status" id="form-select">
+    {% for s in status_choices %}
+    <option value="{{ s }}">{{ s }}</option>
+    {% endfor %}
+  </select>
+  <br /><br />
 
   <label for="purchase_date">購入日:</label>
   <input type="date" id="purchase_date" name="purchase_date" /><br /><br />

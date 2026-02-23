@@ -29,13 +29,14 @@ content %}
   /><br /><br />
 
   <label for="status">※ステータス:</label>
-  <input
-    type="text"
-    id="status"
-    name="status"
-    value="{{ book[3] }}"
-    required
-  /><br /><br />
+  <select name="status" id="form-select">
+    {% for s in status_choices %}
+    <option value="{{ s }}" {% if book[3]=="s" %}selected{% endif %}>
+      {{ s }}
+    </option>
+    {% endfor %}
+  </select>
+  <br /><br />
 
   <label for="purchase_date">購入日:</label>
   <input
@@ -45,11 +46,11 @@ content %}
     value="{{ book[4] }}"
   /><br /><br />
 
-  <label for="completion_date">読了日:</label>
+  <label for="read_date">読了日:</label>
   <input
     type="date"
-    id="completion_date"
-    name="completion_date"
+    id="read_date"
+    name="read_date"
     value="{{ book[5] }}"
   /><br /><br />
 

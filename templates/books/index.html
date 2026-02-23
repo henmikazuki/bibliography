@@ -27,7 +27,17 @@ content %}
     <tr>
       <td>{{ book[1] }}</td>
       <td>{{ book[2] }}</td>
+      {% if book[3] == "未読" %}
+      <td class="badge bg-primary">{{ book[3] }}</td>
+      {% elif book[3] == "読書中" %}
+      <td class="badge bg-warning">{{ book[3] }}</td>
+      {% elif book[3] == "読了" %}
+      <td class="badge bg-success">{{ book[3] }}</td>
+      {% elif book[3] == "破棄" %}
+      <td class="badge bg-danger">{{ book[3] }}</td>
+      {% else %}
       <td>{{ book[3] }}</td>
+      {% endif %}
       <td>{{ book[4] }}</td>
       <td>{{ book[5] }}</td>
       <td>

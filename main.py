@@ -4,6 +4,8 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "secret_key"
 
+STATUS_CHOICES = ["未読", "読書中", "読了", "破棄"]
+
 
 def get_db_connection(db_path):
     """データベースの接続情報を取得する
@@ -94,7 +96,9 @@ def new_book():
 
         return render_template("books/confirm.html", book_data=book_data, mode="create")
     if request.method == "GET":
-        return render_template("books/new/registration.html")
+        return render_template(
+            "books/new/registration.html", status_choices=STATUS_CHOICES
+        )
 
 
 @app.route("/books/new/confirm", methods=["GET", "POST"])
@@ -144,7 +148,9 @@ def edit_book(book_id):
         book = csr.fetchone()
         con.close()
 
-        return render_template("books/edit/edit.html", book=book)
+        return render_template(
+            "books/edit/edit.html", book=book, status_choices=STATUS_CHOICES
+        )
 
 
 @app.route("/books/<int:book_id>/edit/confirm", methods=["GET", "POST"])

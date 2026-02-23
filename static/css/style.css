@@ -1,0 +1,16 @@
+.status-unread {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.status-reading {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-read {
+  background-color: #d4edda;
+  color: #155724;
+}
+.status-discarded {
+  background-color: #d6d8d9;
+  color: #1b1e21;
+}
