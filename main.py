@@ -104,7 +104,6 @@ def books():
     csr.execute(sql)
     books = csr.fetchall()
     books = replace_books(books)
-    print(books)
     count = len(books)
     con.close()
 
@@ -199,7 +198,7 @@ def confirm_edit_book(book_id):
         book_data = get_book_form_data(request.form)
         con, csr = db_connection()
         sql = (
-            "UPDATE books SET title = ?, category = ?, status = ?, "
+            "UPDATE books SET title = ?, category = ?, status = ?, memo = ?, "
             "purchase_date = ?, read_date = ?, updated_at = "
             'datetime("now", "localtime") WHERE id = ?'
         )
