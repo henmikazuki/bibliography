@@ -41,6 +41,26 @@ def is_not_empty_required_fields(book_data):
     return True
 
 
+def replace_books(books):
+    """書籍データを辞書型に置換する
+
+    :param books: 書籍データのリスト
+    :return: 辞書型に置換された書籍データのリスト
+    """
+    replaced_books = []
+    for book in books:
+        replaced_book = {
+            "id": book[0],
+            "title": book[1],
+            "category": book[2],
+            "status": book[3],
+            "purchase_date": book[4],
+            "read_date": book[5],
+        }
+        replaced_books.append(replaced_book)
+    return replaced_books
+
+
 def get_book_form_data(form):
     """フォームから書籍データを辞書で取得
     :param form: フォームデータ
@@ -50,6 +70,7 @@ def get_book_form_data(form):
         "title": form.get("title", ""),
         "category": form.get("category", ""),
         "status": form.get("status", ""),
+        "memo": form.get("memo", ""),
         "purchase_date": form.get("purchase_date", ""),
         "read_date": form.get("read_date", ""),
     }
@@ -64,6 +85,7 @@ def sql_statement_construction(book_data):
         book_data["title"],
         book_data["category"],
         book_data["status"],
+        book_data["memo"],
         book_data["purchase_date"],
         book_data["read_date"],
     )
@@ -81,9 +103,27 @@ def books():
     )
     csr.execute(sql)
     books = csr.fetchall()
+    books = replace_books(books)
+    print(books)
+    count = len(books)
     con.close()
 
-    return render_template("books/index.html", books=books)
+    return render_template("books/index.html", books=books, count=count)
+
+
+@app.route("/books/<int:book_id>")
+def book_detail(book_id):
+    con, csr = db_connection()
+
+    sql = (
+        "SELECT id, title, category, status, memo, purchase_date, read_date "
+        "FROM books WHERE id = ? AND deleted = 0"
+    )
+    csr.execute(sql, (book_id,))
+    book = csr.fetchone()
+    con.close()
+
+    return render_template("books/detail.html", book=book)
 
 
 @app.route("/books/new", methods=["GET", "POST"])
@@ -108,9 +148,9 @@ def confirm_new_book():
         con, csr = db_connection()
 
         sql = (
-            "INSERT INTO books (title, category, status, purchase_date, read_date, "
-            "deleted, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, 0, "
+            "INSERT INTO books (title, category, status, memo, purchase_date, "
+            "read_date, deleted, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, 0, "
             'datetime("now", "localtime"), datetime("now", "localtime"))'
         )
         csr.execute(
@@ -141,8 +181,8 @@ def edit_book(book_id):
     if request.method == "GET":
         con, csr = db_connection()
         sql = (
-            "SELECT id, title, category, status, purchase_date, read_date FROM books "
-            "WHERE id = ?"
+            "SELECT id, title, category, status, memo, purchase_date, read_date "
+            "FROM books WHERE id = ?"
         )
         csr.execute(sql, (book_id,))
         book = csr.fetchone()
@@ -191,7 +231,7 @@ def delete_book(book_id):
         return redirect("/books")
     if request.method == "GET":
         sql = (
-            "SELECT id, title, category, status, purchase_date, read_date "
+            "SELECT id, title, category, status, memo, purchase_date, read_date "
             "FROM books WHERE id = ?"
         )
         csr.execute(sql, (book_id,))
@@ -200,8 +240,9 @@ def delete_book(book_id):
             "title": book[1],
             "category": book[2],
             "status": book[3],
-            "purchase_date": book[4],
-            "read_date": book[5],
+            "memo": book[4],
+            "purchase_date": book[5],
+            "read_date": book[6],
         }
         con.close()
         return render_template(

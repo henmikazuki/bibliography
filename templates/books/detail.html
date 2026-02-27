@@ -1,0 +1,25 @@
+{% extends "books/base.html" %}
+{% block title %}{{ book[1] }} - 書籍詳細ページ{% endblock %}
+{% block content %}
+<h1>{{ book[1] }}</h1>
+{% with messages = get_flashed_messages() %} {% if messages %}
+<ul>
+  {% for message in messages %}
+  <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %} {% endwith %}
+<div class="card">
+    <div class="card-body">
+        <p><strong>カテゴリー:</strong> {{ book[2] }}</p>
+        <p><strong>ステータス:</strong> {{ book[3] }}</p>
+        <p><strong>メモ:</strong> {% if book[4] %} {{ book[4] }} {% else %} なし {% endif %}</p>
+        <p><strong>購入日:</strong> {% if book[5] %} {{ book[5] }} {% else %} なし {% endif %}</p>
+        <p><strong>読了日:</strong> {% if book[6] %} {{ book[6] }} {% else %} なし {% endif %}</p>
+    </div>
+</div>
+<p>
+    <a href="/books/{{ book[0] }}/edit">編集</a>
+    <a href="/books/{{ book[0] }}/delete">削除</a>
+</p>
+{% endblock %}

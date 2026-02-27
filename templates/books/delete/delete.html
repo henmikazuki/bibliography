@@ -6,6 +6,7 @@ content %}
   <li><strong>タイトル:</strong> {{ book_data.title }}</li>
   <li><strong>カテゴリー:</strong> {{ book_data.category }}</li>
   <li><strong>ステータス:</strong> {{ book_data.status }}</li>
+  <li><strong>メモ:</strong> {{ book_data.memo }}</li>
   <li>
     <strong>購入日:</strong>
     {% if book_data.purchase_date %} {{ book_data.purchase_date }} {% else %}
