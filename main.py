@@ -136,7 +136,7 @@ def new_book():
         return render_template("books/confirm.html", book_data=book_data, mode="create")
     if request.method == "GET":
         return render_template(
-            "books/new/registration.html", status_choices=STATUS_CHOICES
+            "books/form.html", status_choices=STATUS_CHOICES, mode="create"
         )
 
 
@@ -188,7 +188,7 @@ def edit_book(book_id):
         con.close()
 
         return render_template(
-            "books/edit/edit.html", book=book, status_choices=STATUS_CHOICES
+            "books/form.html", book=book, status_choices=STATUS_CHOICES, mode="update"
         )
 
 
