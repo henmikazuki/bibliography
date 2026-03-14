@@ -95,7 +95,7 @@ def confirm_new_book():
         book = get_book_form_data(request.form)
         append_book_data(book)
 
-        flash("書籍を登録しました。")
+        flash(f"「{book['title']}」を登録しました。")
 
         return redirect("/books")
     if request.method == "GET":
@@ -126,7 +126,7 @@ def confirm_edit_book(book_id):
         book_data = get_book_form_data(request.form)
         update_book_data(book_id, book_data)
 
-        flash("書籍を更新しました。")
+        flash(f"「{book_data['title']}」を更新しました。")
 
         return redirect("/books")
     if request.method == "GET":
