@@ -11,15 +11,15 @@
 {% endif %} {% endwith %}
 <div class="card">
     <div class="card-body">
-        <p><strong>カテゴリー:</strong> {{ book[2] }}</p>
-        <p><strong>ステータス:</strong> {{ book[3] }}</p>
-        <p><strong>メモ:</strong> {% if book[4] %} {{ book[4] }} {% else %} なし {% endif %}</p>
-        <p><strong>購入日:</strong> {% if book[5] %} {{ book[5] }} {% else %} なし {% endif %}</p>
-        <p><strong>読了日:</strong> {% if book[6] %} {{ book[6] }} {% else %} なし {% endif %}</p>
+        <p><strong>カテゴリー:</strong> {{ book['category'] }}</p>
+        <p><strong>ステータス:</strong> {{ book['status'] }}</p>
+        <p><strong>メモ:</strong> {% if book['memo'] %} {{ book['memo'] }} {% else %} なし {% endif %}</p>
+        <p><strong>購入日:</strong> {% if book['purchase_date'] %} {{ book['purchase_date'] }} {% else %} なし {% endif %}</p>
+        <p><strong>読了日:</strong> {% if book['read_date'] %} {{ book['read_date'] }} {% else %} なし {% endif %}</p>
     </div>
 </div>
 <p>
-    <a href="/books/{{ book[0] }}/edit">編集</a>
-    <a href="/books/{{ book[0] }}/delete">削除</a>
+    <a href="/books/{{ book['id'] }}/edit">編集</a>
+    <a href="/books/{{ book['id'] }}/delete">削除</a>
 </p>
 {% endblock %}

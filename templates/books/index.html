@@ -25,21 +25,21 @@ content %}
   <tbody>
     {% for book in books %}
     <tr>
-      <td><a href="/books/{{ book.id }}">{{ book.title }}</a></td>
-      <td>{{ book.category }}</td>
-      {% if book.status == "未読" %}
-      <td class="badge bg-primary">{{ book.status }}</td>
-      {% elif book.status == "読書中" %}
-      <td class="badge bg-warning">{{ book.status }}</td>
-      {% elif book.status == "読了" %}
-      <td class="badge bg-success">{{ book.status }}</td>
-      {% elif book.status == "破棄" %}
-      <td class="badge bg-danger">{{ book.status }}</td>
+      <td><a href="/books/{{ book['id'] }}">{{ book['title'] }}</a></td>
+      <td>{{ book['category'] }}</td>
+      {% if book['status'] == "未読" %}
+      <td class="badge bg-primary">{{ book['status'] }}</td>
+      {% elif book['status'] == "読書中" %}
+      <td class="badge bg-warning">{{ book['status'] }}</td>
+      {% elif book['status'] == "読了" %}
+      <td class="badge bg-success">{{ book['status'] }}</td>
+      {% elif book['status'] == "破棄" %}
+      <td class="badge bg-danger">{{ book['status'] }}</td>
       {% else %}
-      <td>{{ book.status }}</td>
+      <td>{{ book['status'] }}</td>
       {% endif %}
-      <td>{{ book.purchase_date }}</td>
-      <td>{{ book.read_date }}</td>
+      <td>{{ book['purchase_date'] }}</td>
+      <td>{{ book['read_date'] }}</td>
     </tr>
     {% endfor %}
   </tbody>

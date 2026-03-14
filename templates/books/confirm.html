@@ -7,19 +7,18 @@ block content %} {% if mode == "create" %}
 <p>以下の内容で書籍を更新します。よろしいですか？</p>
 {% endif %}
 <ul>
-  <li><strong>タイトル:</strong> {{ book_data.title }}</li>
-  <li><strong>カテゴリー:</strong> {{ book_data.category }}</li>
-  <li><strong>ステータス:</strong> {{ book_data.status }}</li>
-  <li><strong>メモ:</strong> {{ book_data.memo }}</li>
+  <li><strong>タイトル:</strong> {{ book_data['title'] }}</li>
+  <li><strong>カテゴリー:</strong> {{ book_data['category'] }}</li>
+  <li><strong>ステータス:</strong> {{ book_data['status'] }}</li>
+  <li><strong>メモ:</strong> {{ book_data['memo'] }}</li>
   <li>
     <strong>購入日:</strong>
-    {% if book_data.purchase_date %} {{ book_data.purchase_date }} {% else %}
+    {% if book_data['purchase_date'] %} {{ book_data['purchase_date'] }} {% else %}
     なし {% endif %}
   </li>
   <li>
     <strong>読了日:</strong>
-    {% if book_data.read_date %} {{ book_data.read_date }} {% else %} なし {%
-    endif %}
+    {% if book_data['read_date'] %} {{ book_data['read_date'] }} {% else %} なし {% endif %}
   </li>
 </ul>
 {% if mode == "create" %}
@@ -27,15 +26,15 @@ block content %} {% if mode == "create" %}
   {% elif mode == "update" %}
   <form action="/books/{{ book_id }}/edit/confirm" method="post">
     {% endif %}
-    <input type="hidden" name="title" value="{{ book_data.title }}" />
-    <input type="hidden" name="category" value="{{ book_data.category }}" />
-    <input type="hidden" name="status" value="{{ book_data.status }}" />
+    <input type="hidden" name="title" value="{{ book_data['title'] }}" />
+    <input type="hidden" name="category" value="{{ book_data['category'] }}" />
+    <input type="hidden" name="status" value="{{ book_data['status'] }}" />
     <input
       type="hidden"
       name="purchase_date"
-      value="{{ book_data.purchase_date }}"
+      value="{{ book_data['purchase_date'] }}"
     />
-    <input type="hidden" name="read_date" value="{{ book_data.read_date }}" />
+    <input type="hidden" name="read_date" value="{{ book_data['read_date'] }}" />
     {% if mode == "create" %}
     <input type="submit" value="登録" />
     {% elif mode == "update" %}

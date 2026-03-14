@@ -1,31 +1,18 @@
 from flask import Flask, render_template, redirect, request, flash
-import sqlite3
+from db import (
+    get_books,
+    get_book_detail,
+    append_book_data,
+    update_book_data,
+    delete_book_data,
+    close_db,
+)
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
+app.teardown_appcontext(close_db)
 
 STATUS_CHOICES = ["未読", "読書中", "読了", "破棄"]
-
-
-def get_db_connection(db_path):
-    """データベースの接続情報を取得する
-
-    :param db_path: データベースファイルのパス
-    """
-    con = sqlite3.connect(db_path)
-    return con
-
-
-def db_connection():
-    """データベースに接続する
-
-    :return: データベースの接続情報、カーソル
-    """
-    db = "books.db"
-    con = get_db_connection(db)
-    csr = con.cursor()
-
-    return con, csr
 
 
 def is_not_empty_required_fields(book_data):
@@ -39,26 +26,6 @@ def is_not_empty_required_fields(book_data):
         if not book_data.get(field):
             return False
     return True
-
-
-def replace_books(books):
-    """書籍データを辞書型に置換する
-
-    :param books: 書籍データのリスト
-    :return: 辞書型に置換された書籍データのリスト
-    """
-    replaced_books = []
-    for book in books:
-        replaced_book = {
-            "id": book[0],
-            "title": book[1],
-            "category": book[2],
-            "status": book[3],
-            "purchase_date": book[4],
-            "read_date": book[5],
-        }
-        replaced_books.append(replaced_book)
-    return replaced_books
 
 
 def get_book_form_data(form):
@@ -95,33 +62,15 @@ def sql_statement_construction(book_data):
 
 @app.route("/books")
 def books():
-    con, csr = db_connection()
-
-    sql = (
-        "SELECT id, title, category, status, purchase_date, read_date "
-        "FROM books WHERE deleted = 0 ORDER BY created_at DESC"
-    )
-    csr.execute(sql)
-    books = csr.fetchall()
-    books = replace_books(books)
+    books = get_books()
     count = len(books)
-    con.close()
 
     return render_template("books/index.html", books=books, count=count)
 
 
 @app.route("/books/<int:book_id>")
 def book_detail(book_id):
-    con, csr = db_connection()
-
-    sql = (
-        "SELECT id, title, category, status, memo, purchase_date, read_date "
-        "FROM books WHERE id = ? AND deleted = 0"
-    )
-    csr.execute(sql, (book_id,))
-    book = csr.fetchone()
-    con.close()
-
+    book = get_book_detail(book_id)
     return render_template("books/detail.html", book=book)
 
 
@@ -144,20 +93,7 @@ def new_book():
 def confirm_new_book():
     if request.method == "POST":
         book = get_book_form_data(request.form)
-        con, csr = db_connection()
-
-        sql = (
-            "INSERT INTO books (title, category, status, memo, purchase_date, "
-            "read_date, deleted, created_at, updated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, 0, "
-            'datetime("now", "localtime"), datetime("now", "localtime"))'
-        )
-        csr.execute(
-            sql,
-            sql_statement_construction(book),
-        )
-        con.commit()
-        con.close()
+        append_book_data(book)
 
         flash("書籍を登録しました。")
 
@@ -178,15 +114,7 @@ def edit_book(book_id):
             "books/confirm.html", book_data=book_data, book_id=book_id, mode="update"
         )
     if request.method == "GET":
-        con, csr = db_connection()
-        sql = (
-            "SELECT id, title, category, status, memo, purchase_date, read_date "
-            "FROM books WHERE id = ?"
-        )
-        csr.execute(sql, (book_id,))
-        book = csr.fetchone()
-        con.close()
-
+        book = get_book_detail(book_id)
         return render_template(
             "books/form.html", book=book, status_choices=STATUS_CHOICES, mode="update"
         )
@@ -196,15 +124,7 @@ def edit_book(book_id):
 def confirm_edit_book(book_id):
     if request.method == "POST":
         book_data = get_book_form_data(request.form)
-        con, csr = db_connection()
-        sql = (
-            "UPDATE books SET title = ?, category = ?, status = ?, memo = ?, "
-            "purchase_date = ?, read_date = ?, updated_at = "
-            'datetime("now", "localtime") WHERE id = ?'
-        )
-        csr.execute(sql, sql_statement_construction(book_data) + (book_id,))
-        con.commit()
-        con.close()
+        update_book_data(book_id, book_data)
 
         flash("書籍を更新しました。")
 
@@ -215,35 +135,14 @@ def confirm_edit_book(book_id):
 
 @app.route("/books/<int:book_id>/delete", methods=["GET", "POST"])
 def delete_book(book_id):
-    con, csr = db_connection()
     if request.method == "POST":
-        sql = (
-            "UPDATE books SET deleted = 1, updated_at = datetime('now', 'localtime') "
-            "WHERE id = ?"
-        )
-        csr.execute(sql, (book_id,))
-        con.commit()
-        con.close()
+        delete_book_data(book_id)
 
         flash("書籍を削除しました。")
 
         return redirect("/books")
     if request.method == "GET":
-        sql = (
-            "SELECT id, title, category, status, memo, purchase_date, read_date "
-            "FROM books WHERE id = ?"
-        )
-        csr.execute(sql, (book_id,))
-        book = csr.fetchone()
-        book_data = {
-            "title": book[1],
-            "category": book[2],
-            "status": book[3],
-            "memo": book[4],
-            "purchase_date": book[5],
-            "read_date": book[6],
-        }
-        con.close()
+        book_data = get_book_detail(book_id)
         return render_template(
             "books/delete/delete.html", book_data=book_data, book_id=book_id
         )

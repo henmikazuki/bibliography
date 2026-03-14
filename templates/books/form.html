@@ -14,29 +14,29 @@
 </ul>
 {% endif %} {% endwith %}
 <p>※は必須項目です。</p>
-<form action="{% if mode == 'create' %}/books/new{% else %}/books/{{ book[0] }}/edit{% endif %}" method="post">
+<form action="{% if mode == 'create' %}/books/new{% else %}/books/{{ book['id'] }}/edit{% endif %}" method="post">
   <label for="title">※タイトル:</label>
-  <input type="text" id="title" name="title" value="{% if mode == 'update' %}{{ book[1] }}{% endif %}" required /><br /><br />
+  <input type="text" id="title" name="title" value="{% if mode == 'update' %}{{ book['title'] }}{% endif %}" required /><br /><br />
 
   <label for="category">※カテゴリー:</label>
-  <input type="text" id="category" name="category" value="{% if mode == 'update' %}{{ book[2] }}{% endif %}" required /><br /><br />
+  <input type="text" id="category" name="category" value="{% if mode == 'update' %}{{ book['category'] }}{% endif %}" required /><br /><br />
 
   <label for="status">※ステータス:</label>
   <select name="status" id="form-select">
     {% for s in status_choices %}
-    <option value="{{ s }}" {% if mode == 'update' and book[3] == s %}selected{% endif %}>{{ s }}</option>
+    <option value="{{ s }}" {% if mode == 'update' and book['status'] == s %}selected{% endif %}>{{ s }}</option>
     {% endfor %}
   </select>
   <br /><br />
 
   <label for="memo">メモ:</label>
-  <textarea id="memo" name="memo">{% if mode == 'update' %}{{ book[4] }}{% endif %}</textarea><br /><br />
+  <textarea id="memo" name="memo">{% if mode == 'update' %}{{ book['memo'] }}{% endif %}</textarea><br /><br />
 
   <label for="purchase_date">購入日:</label>
-  <input type="date" id="purchase_date" name="purchase_date" value="{% if mode == 'update' %}{{ book[5] }}{% endif %}" /><br /><br />
+  <input type="date" id="purchase_date" name="purchase_date" value="{% if mode == 'update' %}{{ book['purchase_date'] }}{% endif %}" /><br /><br />
 
   <label for="read_date">読了日:</label>
-  <input type="date" id="read_date" name="read_date" value="{% if mode == 'update' %}{{ book[6] }}{% endif %}" /><br /><br />
+  <input type="date" id="read_date" name="read_date" value="{% if mode == 'update' %}{{ book['read_date'] }}{% endif %}" /><br /><br />
 
   <input type="submit" value="{% if mode == 'create' %}登録{% else %}更新{% endif %}" />
 </form>
