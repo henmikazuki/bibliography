@@ -24,12 +24,12 @@ def close_db(e=None):
         db.close()
 
 
-def get_books(order="DESC"):
+def get_books(order_sql="created_at DESC"):
     """書籍データを取得する
     :param order: 書籍データの並び順（ASCまたはDESC）
     :return: 書籍データのリスト
     """
-    sql = f"SELECT * FROM books WHERE deleted = 0 ORDER BY created_at {order}"
+    sql = f"SELECT * FROM books WHERE deleted = 0 ORDER BY {order_sql}"
 
     with get_db() as conn:
         return conn.execute(

@@ -62,7 +62,12 @@ def sql_statement_construction(book_data):
 
 @app.route("/books")
 def books():
-    books = get_books()
+    sort = request.args.get("sort", "new")
+    if sort == "new":
+        order_sql = "created_at DESC"
+    elif sort == "old":
+        order_sql = "created_at ASC"
+    books = get_books(order_sql)
     count = len(books)
 
     return render_template("books/index.html", books=books, count=count)
