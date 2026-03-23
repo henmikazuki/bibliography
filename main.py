@@ -98,6 +98,11 @@ def sql_statement_construction(book_data):
     return data
 
 
+@app.route("/")
+def index():
+    return redirect("/books")
+
+
 @app.route("/books")
 def books():
     sort = request.args.get("sort", "new")
