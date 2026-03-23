@@ -28,17 +28,15 @@ content %}
     <tr>
       <td><a href="/books/{{ book['id'] }}">{{ book['title'] }}</a></td>
       <td>{{ book['category'] }}</td>
-      {% if book['status'] == "未読" %}
-      <td class="badge bg-primary">{{ book['status'] }}</td>
-      {% elif book['status'] == "読書中" %}
-      <td class="badge bg-warning">{{ book['status'] }}</td>
-      {% elif book['status'] == "読了" %}
-      <td class="badge bg-success">{{ book['status'] }}</td>
-      {% elif book['status'] == "破棄" %}
-      <td class="badge bg-danger">{{ book['status'] }}</td>
-      {% else %}
-      <td>{{ book['status'] }}</td>
-      {% endif %}
+      <td><span class="badge 
+        {% if book['status'] == '読了' %}bg-success
+        {% elif book['status'] == '読書中' %}bg-warning
+        {% elif book['status'] == '未読' %}bg-primary
+        {% else %}bg-secondary
+        {% endif %}">
+          {{ book['status'] }}
+        </span>
+      </td>
       <td>{{ book['purchase_date'] }}</td>
       <td>{{ book['read_date'] }}</td>
     </tr>
