@@ -7,6 +7,7 @@ from db import (
     delete_book_data,
     close_db,
 )
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
@@ -26,6 +27,43 @@ def is_not_empty_required_fields(book_data):
         if not book_data.get(field):
             return False
     return True
+
+
+def validate_dates(purchase_date, read_date):
+    """購入日と読了日の妥当性を確認する
+
+    :param purchase_date: 購入日
+    :param read_date: 読了日
+    :return: エラーメッセージのリスト
+    """
+    errors = []
+    if purchase_date:
+        try:
+            purchase_date_obj = datetime.strptime(purchase_date, "%Y-%m-%d")
+            if purchase_date_obj > datetime.today():
+                errors.append("購入日が未来の日付になっています。")
+        except ValueError:
+            errors.append("購入日の形式が正しくありません。")
+    if read_date:
+        try:
+            read_date_obj = datetime.strptime(read_date, "%Y-%m-%d")
+            if not purchase_date:
+                errors.append("購入日が未入力の場合、読了日は入力できません。")
+            elif read_date_obj < purchase_date_obj:
+                errors.append("読了日が購入日より前になっています。")
+            if read_date_obj > datetime.today():
+                errors.append("読了日が未来の日付になっています。")
+        except ValueError:
+            errors.append("読了日の形式が正しくありません。")
+    if purchase_date and read_date:
+        try:
+            purchase_date_obj = datetime.strptime(purchase_date, "%Y-%m-%d")
+            read_date_obj = datetime.strptime(read_date, "%Y-%m-%d")
+            if purchase_date_obj > read_date_obj:
+                errors.append("購入日が読了日より後になっています。")
+        except ValueError:
+            pass
+    return errors
 
 
 def get_book_form_data(form):
@@ -80,17 +118,36 @@ def book_detail(book_id):
 
 
 @app.route("/books/new", methods=["GET", "POST"])
-def new_book():
+def new_book(book=None):
     if request.method == "POST":
         book_data = get_book_form_data(request.form)
         if not is_not_empty_required_fields(book_data):
             flash("タイトル、カテゴリー、ステータスは必須項目です。")
-            return redirect("/books/new")
+            return render_template(
+                "books/form.html",
+                book=book_data,
+                status_choices=STATUS_CHOICES,
+                mode="create",
+            )
 
+        errors = validate_dates(book_data["purchase_date"], book_data["read_date"])
+        if errors:
+            for error in errors:
+                flash(error)
+            return render_template(
+                "books/form.html",
+                book=book_data,
+                status_choices=STATUS_CHOICES,
+                mode="create",
+            )
         return render_template("books/confirm.html", book_data=book_data, mode="create")
+
     if request.method == "GET":
         return render_template(
-            "books/form.html", status_choices=STATUS_CHOICES, mode="create"
+            "books/form.html",
+            status_choices=STATUS_CHOICES,
+            mode="create",
+            book=book,
         )
 
 
