@@ -50,19 +50,11 @@ def validate_dates(purchase_date, read_date):
             if not purchase_date:
                 errors.append("購入日が未入力の場合、読了日は入力できません。")
             elif read_date_obj < purchase_date_obj:
-                errors.append("読了日が購入日より前になっています。")
+                errors.append("読了日が購入日より前の日付になっています。")
             if read_date_obj > datetime.today():
                 errors.append("読了日が未来の日付になっています。")
         except ValueError:
             errors.append("読了日の形式が正しくありません。")
-    if purchase_date and read_date:
-        try:
-            purchase_date_obj = datetime.strptime(purchase_date, "%Y-%m-%d")
-            read_date_obj = datetime.strptime(read_date, "%Y-%m-%d")
-            if purchase_date_obj > read_date_obj:
-                errors.append("購入日が読了日より後になっています。")
-        except ValueError:
-            pass
     return errors
 
 
