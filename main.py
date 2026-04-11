@@ -127,7 +127,7 @@ def new_book(book=None):
     if request.method == "POST":
         book_data = get_book_form_data(request.form)
         if not is_not_empty_required_fields(book_data):
-            flash("タイトル、カテゴリー、ステータスは必須項目です。")
+            flash("タイトル、カテゴリー、ステータスは必須項目です。", "danger")
             return render_template(
                 "books/form.html",
                 book=book_data,
@@ -138,7 +138,7 @@ def new_book(book=None):
         errors = validate_dates(book_data["purchase_date"], book_data["read_date"])
         if errors:
             for error in errors:
-                flash(error)
+                flash(error, "danger")
             return render_template(
                 "books/form.html",
                 book=book_data,
@@ -162,7 +162,7 @@ def confirm_new_book():
         book = get_book_form_data(request.form)
         append_book_data(book)
 
-        flash(f"「{book['title']}」を登録しました。")
+        flash(f"「{book['title']}」を登録しました。", "success")
 
         return redirect("/books")
     if request.method == "GET":
@@ -174,7 +174,7 @@ def edit_book(book_id):
     if request.method == "POST":
         book_data = get_book_form_data(request.form)
         if not is_not_empty_required_fields(book_data):
-            flash("タイトル、カテゴリー、ステータスは必須項目です。")
+            flash("タイトル、カテゴリー、ステータスは必須項目です。", "danger")
             return redirect(f"/books/{book_id}/edit")
 
         return render_template(
@@ -193,7 +193,7 @@ def confirm_edit_book(book_id):
         book_data = get_book_form_data(request.form)
         update_book_data(book_id, book_data)
 
-        flash(f"「{book_data['title']}」を更新しました。")
+        flash(f"「{book_data['title']}」を更新しました。", "info")
 
         return redirect("/books")
     if request.method == "GET":
@@ -205,7 +205,7 @@ def delete_book(book_id):
     if request.method == "POST":
         delete_book_data(book_id)
 
-        flash("書籍を削除しました。")
+        flash("書籍を削除しました。", "warning")
 
         return redirect("/books")
     if request.method == "GET":

@@ -3,14 +3,18 @@ content %}
 <h1>書籍一覧</h1>
 <a href="/books/new">新しい書籍を登録</a>
 {% if not books %}
-<p>登録されている書籍はありません。</p>
-{% else %} {% with messages = get_flashed_messages() %} {% if messages %}
-<ul>
-  {% for message in messages %}
-  <li>{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %} {% endwith %}
+  <p>登録されている書籍はありません。</p>
+{% else %}
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <p>全{{ count }}件</p>
 <p>並び替え: <a href="?sort=new">新しい順</a> | <a href="?sort=old">古い順</a></p>
 <table class="table">
