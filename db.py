@@ -24,16 +24,18 @@ def close_db(e=None):
         db.close()
 
 
-def get_books(order_sql="created_at DESC"):
+# TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
+def get_books(filter_sql, params, order="DESC"):
     """書籍データを取得する
+    :param filter: フィルタの内容
     :param order: 書籍データの並び順（ASCまたはDESC）
     :return: 書籍データのリスト
     """
-    sql = f"SELECT * FROM books WHERE deleted = 0 ORDER BY {order_sql}"
+    sql = f"SELECT * FROM books WHERE deleted = 0 {filter_sql} ORDER BY created_at {order}"
 
     with get_db() as conn:
         return conn.execute(
-            sql,
+            sql, params
         ).fetchall()
 
 

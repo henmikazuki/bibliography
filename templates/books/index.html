@@ -16,7 +16,12 @@ content %}
   {% endif %}
 {% endwith %}
 <p>全{{ count }}件</p>
-<p>並び替え: <a href="?sort=new">新しい順</a> | <a href="?sort=old">古い順</a></p>
+<p>並び替え: <a href="?sort=new" class="{% if request.args.get('sort') == 'new' %}fw-bold{% endif %}">新しい順</a> | 
+  <a href="?sort=old" class="{% if request.args.get('sort') == 'old' %}fw-bold{% endif %}">古い順</a></p>
+<a href="/books" class="{% if not request.args.get('status') %}fw-bold{% endif %}">すべて</a>
+<a href="/books?status=未読{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '未読' %}fw-bold{% endif %}">未読</a>
+<a href="/books?status=読書中{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読書中' %}fw-bold{% endif %}">読書中</a>
+<a href="/books?status=読了{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読了' %}fw-bold{% endif %}">読了</a>
 <table class="table">
   <thead>
     <tr>

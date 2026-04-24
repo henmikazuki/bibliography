@@ -97,15 +97,26 @@ def index():
 
 @app.route("/books")
 def books():
+    # TODO: ソートとフィルタの処理を同時にできるようにする。
     sort = request.args.get("sort", "new")
+    status = request.args.get("status")
+    params = []
+
+    if status:
+        filter_sql = "AND status = ?"
+        params.append(status)
+    else:
+        filter_sql = ""
+
     if sort == "new":
-        order_sql = "created_at DESC"
+        order = "DESC"
     elif sort == "old":
-        order_sql = "created_at ASC"
-    books = get_books(order_sql)
+        order = "ASC"
+
+    books = get_books(filter_sql, params, order)
     count = len(books)
 
-    return render_template("books/index.html", books=books, count=count)
+    return render_template("books/index.html", books=books, count=count, sort=sort)
 
 
 @app.route("/books/<int:book_id>")
