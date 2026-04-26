@@ -2,9 +2,6 @@
 content %}
 <h1>書籍一覧</h1>
 <a href="/books/new">新しい書籍を登録</a>
-{% if not books %}
-  <p>登録されている書籍はありません。</p>
-{% else %}
 {% with messages = get_flashed_messages(with_categories=True) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -22,6 +19,7 @@ content %}
 <a href="/books?status=未読{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '未読' %}fw-bold{% endif %}">未読</a>
 <a href="/books?status=読書中{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読書中' %}fw-bold{% endif %}">読書中</a>
 <a href="/books?status=読了{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読了' %}fw-bold{% endif %}">読了</a>
+{% if books %}
 <table class="table">
   <thead>
     <tr>
@@ -52,4 +50,9 @@ content %}
     {% endfor %}
   </tbody>
 </table>
-{% endif %} {% endblock %}
+{% else %}
+  <div class="alert alert-secondary">
+    該当する書籍はありません。
+  </div>
+{% endif %}
+{% endblock %}
