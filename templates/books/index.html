@@ -40,12 +40,12 @@ content %}
         {% elif book['status'] == '読書中' %}bg-warning
         {% elif book['status'] == '未読' %}bg-primary
         {% else %}bg-secondary
-        {% endif %}">
+        {% endif %} px-3 py-2">
           {{ book['status'] }}
         </span>
       </td>
-      <td>{{ book['purchase_date'] }}</td>
-      <td>{{ book['read_date'] }}</td>
+      <td>{% if book['purchase_date'] %}{{ book['purchase_date'] }}{% else %}---{% endif %}</td>
+      <td>{% if book['read_date'] %}{{ book['read_date'] }}{% else %}---{% endif %}</td>
     </tr>
     {% endfor %}
   </tbody>
