@@ -31,7 +31,8 @@ def get_books(filter_sql, params, order="DESC"):
     :param order: 書籍データの並び順（ASCまたはDESC）
     :return: 書籍データのリスト
     """
-    sql = f"SELECT * FROM books WHERE deleted = 0 {filter_sql} ORDER BY created_at {order}"
+    sql = f"""SELECT * FROM books WHERE deleted = 0 {filter_sql}
+    ORDER BY created_at {order}"""
 
     with get_db() as conn:
         return conn.execute(sql, params).fetchall()
