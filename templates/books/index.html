@@ -19,7 +19,15 @@ content %}
 <a href="/books?status=未読{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '未読' %}fw-bold{% endif %}">未読</a>
 <a href="/books?status=読書中{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読書中' %}fw-bold{% endif %}">読書中</a>
 <a href="/books?status=読了{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読了' %}fw-bold{% endif %}">読了</a>
-{% if books %}
+{% if not has_books %}
+  <div class="alert alert-secondary">
+    まだ書籍が登録されていません。
+  </div>
+{% elif not has_results %}
+  <div class="alert alert-warning">
+    条件に一致する書籍はありません。
+  </div>
+{% else %}
 <table class="table">
   <thead>
     <tr>
@@ -41,18 +49,14 @@ content %}
         {% elif book['status'] == '未読' %}bg-primary
         {% else %}bg-secondary
         {% endif %} px-3 py-2">
-          {{ book['status'] }}
-        </span>
-      </td>
-      <td>{% if book['purchase_date'] %}{{ book['purchase_date'] }}{% else %}---{% endif %}</td>
-      <td>{% if book['read_date'] %}{{ book['read_date'] }}{% else %}---{% endif %}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
+        {{ book['status'] }}
+      </span>
+    </td>
+    <td>{% if book['purchase_date'] %}{{ book['purchase_date'] }}{% else %}---{% endif %}</td>
+    <td>{% if book['read_date'] %}{{ book['read_date'] }}{% else %}---{% endif %}</td>
+  </tr>
+  {% endfor %}
+</tbody>
 </table>
-{% else %}
-  <div class="alert alert-secondary">
-    該当する書籍はありません。
-  </div>
 {% endif %}
 {% endblock %}

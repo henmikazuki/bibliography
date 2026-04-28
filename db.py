@@ -24,8 +24,18 @@ def close_db(e=None):
         db.close()
 
 
+def get_total_count():
+    """書籍データの総件数を取得する
+    :return: 書籍データの総件数
+    """
+    sql = "SELECT COUNT(*) FROM books WHERE deleted = 0"
+
+    with get_db() as conn:
+        return conn.execute(sql).fetchone()[0]
+
+
 # TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
-def get_books(filter_sql, params, order="DESC"):
+def get_filtered_books(filter_sql, params, order="DESC"):
     """書籍データを取得する
     :param filter: フィルタの内容
     :param order: 書籍データの並び順（ASCまたはDESC）

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, flash
 from db import (
-    get_books,
+    get_total_count,
+    get_filtered_books,
     get_book_detail,
     append_book_data,
     update_book_data,
@@ -102,6 +103,8 @@ def books():
     status = request.args.get("status")
     params = []
 
+    all_count = get_total_count()  # フィルタなし件数
+
     if status:
         filter_sql = "AND status = ?"
         params.append(status)
@@ -113,10 +116,20 @@ def books():
     elif sort == "old":
         order = "ASC"
 
-    books = get_books(filter_sql, params, order)
-    count = len(books)
+    filtered_books = get_filtered_books(filter_sql, params, order)
+    filtered_count = len(filtered_books)
 
-    return render_template("books/index.html", books=books, count=count, sort=sort)
+    has_books = all_count > 0
+    has_results = filtered_count > 0
+
+    return render_template(
+        "books/index.html",
+        has_books=has_books,
+        has_results=has_results,
+        books=filtered_books,
+        count=filtered_count,
+        sort=sort,
+    )
 
 
 @app.route("/books/<int:book_id>")
