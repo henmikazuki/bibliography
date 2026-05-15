@@ -1,7 +1,6 @@
 import sqlite3
 from flask import g
 
-
 DATABASE = "books.db"
 
 
@@ -35,17 +34,25 @@ def get_total_count():
 
 
 # TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
-def get_filtered_books(filter_sql, params, order="DESC"):
+def get_filtered_books(filter, params, order="DESC", per_page=5, offset=0):
     """書籍データを取得する
     :param filter: フィルタの内容
+    :param params: フィルタのパラメータ
     :param order: 書籍データの並び順（ASCまたはDESC）
-    :return: 書籍データのリスト
+    :param per_page: 1ページあたりの件数
+    :param offset: 取得開始位置
+    :return: 書籍データのリスト, フィルタ後の件数
     """
-    sql = f"""SELECT * FROM books WHERE deleted = 0 {filter_sql}
-    ORDER BY created_at {order}"""
+    filter_sql = f"""SELECT * FROM books WHERE deleted = 0 {filter}
+    ORDER BY created_at {order} LIMIT {per_page} OFFSET {offset}"""
+
+    count_sql = f"""SELECT COUNT(*) FROM books WHERE deleted = 0 {filter}"""
 
     with get_db() as conn:
-        return conn.execute(sql, params).fetchall()
+        return (
+            conn.execute(filter_sql, params).fetchall(),
+            conn.execute(count_sql, params).fetchone()[0],
+        )
 
 
 def get_book_detail(book_id):

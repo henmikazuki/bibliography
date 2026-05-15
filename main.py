@@ -15,6 +15,7 @@ app.secret_key = "secret_key"
 app.teardown_appcontext(close_db)
 
 STATUS_CHOICES = ["未読", "読書中", "読了", "破棄"]
+PER_PAGE = 10
 
 
 def is_not_empty_required_fields(book_data):
@@ -59,6 +60,17 @@ def validate_dates(purchase_date, read_date):
     return errors
 
 
+def paging_check(page, all_count):
+    """前のページと次のページが存在するかを確認する
+    :param page: 現在のページ番号
+    :param all_count: 全件数
+    :return: 前のページが存在する場合はTrue、次のページが存在する場合はTrue
+    """
+    before_page = page > 1
+    after_page = page * PER_PAGE < all_count
+    return before_page, after_page
+
+
 def get_book_form_data(form):
     """フォームから書籍データを辞書で取得
     :param form: フォームデータ
@@ -101,6 +113,8 @@ def books():
     # TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
     sort = request.args.get("sort", "new")
     status = request.args.get("status")
+
+    # 絞り込みの条件をリスト化
     params = []
 
     all_count = get_total_count()  # フィルタなし件数
@@ -116,8 +130,19 @@ def books():
     elif sort == "old":
         order = "ASC"
 
-    filtered_books = get_filtered_books(filter_sql, params, order)
-    filtered_count = len(filtered_books)
+    page = int(request.args.get("page", 1))
+    if page < 1:
+        page = 1
+
+    offset = (page - 1) * PER_PAGE
+
+    filtered_books, filtered_count = get_filtered_books(
+        filter_sql, params, order, PER_PAGE, offset
+    )
+
+    before_page, after_page = paging_check(page, filtered_count)
+    begin_book = offset + 1
+    end_book = min(offset + PER_PAGE, filtered_count)
 
     has_books = all_count > 0
     has_results = filtered_count > 0
@@ -129,6 +154,11 @@ def books():
         books=filtered_books,
         count=filtered_count,
         sort=sort,
+        page=page,
+        begin_book=begin_book,
+        end_book=end_book,
+        before_page=before_page,
+        after_page=after_page,
     )
 
 

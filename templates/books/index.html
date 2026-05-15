@@ -58,5 +58,20 @@ content %}
   {% endfor %}
 </tbody>
 </table>
+<div>
+  <span>{{ begin_book }} - {{ end_book }} / {{ count }}</span>
+</div>
+{% if before_page %}
+  <a href="?page={{ page - 1 }}{% if sort == "old"%}&sort={{ sort }}{% endif %}{% if status %}&status={{ status }}{% endif %}">前へ</a>
+{% else %}
+  <span class="text-muted">前へ</span>
+{% endif %}
+{% if after_page %}
+  <a href="?page={{ page + 1 }}{% if sort == "old"%}&sort={{ sort }}{% endif %}{% if status %}&status={{ status }}{% endif %}">次へ</a>
+{% else %}
+  <span class="text-muted">次へ</span>
+{% endif %}
+<div class="mt-3">
+  <span>Page {{ page }}</span>
 {% endif %}
 {% endblock %}
