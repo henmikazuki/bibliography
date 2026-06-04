@@ -110,7 +110,6 @@ def index():
 
 @app.route("/books")
 def books():
-    # TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
     sort = request.args.get("sort", "new")
     status = request.args.get("status")
 

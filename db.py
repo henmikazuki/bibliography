@@ -33,7 +33,6 @@ def get_total_count():
         return conn.execute(sql).fetchone()[0]
 
 
-# TODO: フィルタ未選択時はパラメータに乗せないようにする。優先度低め。
 def get_filtered_books(filter, params, order="DESC", per_page=5, offset=0):
     """書籍データを取得する
     :param filter: フィルタの内容
