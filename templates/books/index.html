@@ -13,12 +13,12 @@ content %}
   {% endif %}
 {% endwith %}
 <p>全{{ count }}件</p>
-<p>並び替え: <a href="?sort=new" class="{% if request.args.get('sort') == 'new' %}fw-bold{% endif %}">新しい順</a> | 
-  <a href="?sort=old" class="{% if request.args.get('sort') == 'old' %}fw-bold{% endif %}">古い順</a></p>
-<a href="/books" class="{% if not request.args.get('status') %}fw-bold{% endif %}">すべて</a>
-<a href="/books?status=未読{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '未読' %}fw-bold{% endif %}">未読</a>
-<a href="/books?status=読書中{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読書中' %}fw-bold{% endif %}">読書中</a>
-<a href="/books?status=読了{% if sort %}&sort={{sort}}{% endif %}" class="{% if request.args.get('status') == '読了' %}fw-bold{% endif %}">読了</a>
+<p>並び替え: <a href="{{ url_for('books', sort='new', status=request.args.get('status')) }}" class="{% if request.args.get('sort') == 'new' %}fw-bold{% endif %}">新しい順</a> | 
+  <a href="{{ url_for('books', sort='old', status=request.args.get('status')) }}" class="{% if request.args.get('sort') == 'old' %}fw-bold{% endif %}">古い順</a></p>
+<a href="{{ url_for('books') }}" class="{% if not request.args.get('status') %}fw-bold{% endif %}">すべて</a>
+<a href="{{ url_for('books', status='未読', sort=request.args.get('sort')) }}" class="{% if request.args.get('status') == '未読' %}fw-bold{% endif %}">未読</a>
+<a href="{{ url_for('books', status='読書中', sort=request.args.get('sort')) }}" class="{% if request.args.get('status') == '読書中' %}fw-bold{% endif %}">読書中</a>
+<a href="{{ url_for('books', status='読了', sort=request.args.get('sort')) }}" class="{% if request.args.get('status') == '読了' %}fw-bold{% endif %}">読了</a>
 {% if not has_books %}
   <div class="alert alert-secondary">
     まだ書籍が登録されていません。
@@ -62,12 +62,12 @@ content %}
   <span>{{ begin_book }} - {{ end_book }} / {{ count }}</span>
 </div>
 {% if before_page %}
-  <a href="?page={{ page - 1 }}{% if sort == "old"%}&sort={{ sort }}{% endif %}{% if status %}&status={{ status }}{% endif %}">前へ</a>
+  <a href="{{ url_for('books', page=page - 1, sort=request.args.get('sort'), status=request.args.get('status')) }}">前へ</a>
 {% else %}
   <span class="text-muted">前へ</span>
 {% endif %}
 {% if after_page %}
-  <a href="?page={{ page + 1 }}{% if sort == "old"%}&sort={{ sort }}{% endif %}{% if status %}&status={{ status }}{% endif %}">次へ</a>
+  <a href="{{ url_for('books', page=page + 1, sort=request.args.get('sort'), status=request.args.get('status')) }}">次へ</a>
 {% else %}
   <span class="text-muted">次へ</span>
 {% endif %}
