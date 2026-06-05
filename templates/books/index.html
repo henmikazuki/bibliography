@@ -61,12 +61,12 @@ content %}
 <div>
   <span>{{ begin_book }} - {{ end_book }} / {{ count }}</span>
 </div>
-{% if before_page %}
+{% if has_prev %}
   <a href="{{ url_for('books', page=page - 1, sort=request.args.get('sort'), status=request.args.get('status')) }}">前へ</a>
 {% else %}
   <span class="text-muted">前へ</span>
 {% endif %}
-{% if after_page %}
+{% if has_next %}
   <a href="{{ url_for('books', page=page + 1, sort=request.args.get('sort'), status=request.args.get('status')) }}">次へ</a>
 {% else %}
   <span class="text-muted">次へ</span>

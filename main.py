@@ -113,6 +113,14 @@ def books():
     sort = request.args.get("sort", "new")
     status = request.args.get("status")
 
+    pagenation_params = {
+        "start_index": 0,
+        "end_index": 0,
+        "has_prev": False,
+        "has_next": False,
+        "total_pages": 0,
+    }
+
     # 絞り込みの条件をリスト化
     params = []
 
@@ -139,9 +147,13 @@ def books():
         filter_sql, params, order, PER_PAGE, offset
     )
 
-    before_page, after_page = paging_check(page, filtered_count)
-    begin_book = offset + 1
-    end_book = min(offset + PER_PAGE, filtered_count)
+    pagenation_params["has_prev"], pagenation_params["has_next"] = paging_check(
+        page, filtered_count
+    )
+    pagenation_params["start_index"] = offset + 1
+    pagenation_params["end_index"] = min(offset + PER_PAGE, filtered_count)
+    # 将来的にレイアウト変更で総ページ数を表示させるため記載
+    pagenation_params["total_pages"] = (filtered_count + PER_PAGE - 1) // PER_PAGE
 
     has_books = all_count > 0
     has_results = filtered_count > 0
@@ -154,10 +166,10 @@ def books():
         count=filtered_count,
         sort=sort,
         page=page,
-        begin_book=begin_book,
-        end_book=end_book,
-        before_page=before_page,
-        after_page=after_page,
+        begin_book=pagenation_params["start_index"],
+        end_book=pagenation_params["end_index"],
+        has_prev=pagenation_params["has_prev"],
+        has_next=pagenation_params["has_next"],
     )
 
 
