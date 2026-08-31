@@ -103,6 +103,21 @@ def sql_statement_construction(book_data):
     return data
 
 
+def create_pagination(page, all_count):
+    """ページネーションの情報を作成する
+    :param page: 現在のページ番号
+    :param all_count: 全件数
+    :return: ページネーションの情報の辞書
+    """
+    total_pages = (all_count + PER_PAGE - 1) // PER_PAGE
+    return {
+        "current_page": page,
+        "total_pages": total_pages,
+        "has_prev": page > 1,
+        "has_next": page < total_pages,
+    }
+
+
 @app.route("/")
 def index():
     return redirect("/books")
@@ -112,14 +127,6 @@ def index():
 def books():
     sort = request.args.get("sort", "new")
     status = request.args.get("status")
-
-    pagenation_params = {
-        "start_index": 0,
-        "end_index": 0,
-        "has_prev": False,
-        "has_next": False,
-        "total_pages": 0,
-    }
 
     # 絞り込みの条件をリスト化
     params = []
@@ -147,13 +154,7 @@ def books():
         filter_sql, params, order, PER_PAGE, offset
     )
 
-    pagenation_params["has_prev"], pagenation_params["has_next"] = paging_check(
-        page, filtered_count
-    )
-    pagenation_params["start_index"] = offset + 1
-    pagenation_params["end_index"] = min(offset + PER_PAGE, filtered_count)
-    # 将来的にレイアウト変更で総ページ数を表示させるため記載
-    pagenation_params["total_pages"] = (filtered_count + PER_PAGE - 1) // PER_PAGE
+    pagenation = create_pagination(page, filtered_count)
 
     has_books = all_count > 0
     has_results = filtered_count > 0
@@ -166,10 +167,10 @@ def books():
         count=filtered_count,
         sort=sort,
         page=page,
-        begin_book=pagenation_params["start_index"],
-        end_book=pagenation_params["end_index"],
-        has_prev=pagenation_params["has_prev"],
-        has_next=pagenation_params["has_next"],
+        begin_book=offset + 1,
+        end_book=min(offset + PER_PAGE, filtered_count),
+        has_prev=pagenation["has_prev"],
+        has_next=pagenation["has_next"],
     )
 
 
