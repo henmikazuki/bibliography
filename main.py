@@ -129,15 +129,23 @@ def books():
     status = request.args.get("status")
 
     # 絞り込みの条件をリスト化
+    filters = []
     params = []
 
     all_count = get_total_count()  # フィルタなし件数
 
     if status:
-        filter_sql = "AND status = ?"
+        filters.append("status = ?")
         params.append(status)
-    else:
-        filter_sql = ""
+
+    # MEMO: 将来的にカテゴリーでの絞り込みを追加する場合は、以下のコメントアウトを解除して使用する
+    # if category:
+    #     filters.append("category = ?")
+    #     params.append(category)
+
+    filter_sql = ""
+    if filters:
+        filter_sql = "AND " + " AND ".join(filters)
 
     if sort == "new":
         order = "DESC"
