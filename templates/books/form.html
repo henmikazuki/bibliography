@@ -22,7 +22,6 @@
   <input type="text" id="title" name="title" value="{{ book['title'] }}" required /><br /><br />
 
   <label for="category">※カテゴリー:</label>
-  <!-- <input type="text" id="category" name="category" value="{{ book['category'] }}" required /><br /><br /> -->
   <select name="category" id="category_select">
     {% for c in category_choices %}
     <option value="{{ c }}" {% if mode == 'update' and book['category'] == c %}selected{% endif %}>{{ c }}</option>

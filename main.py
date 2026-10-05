@@ -91,23 +91,6 @@ def get_book_form_data(form):
     }
 
 
-# def sql_statement_construction(book_data):
-#     """SQL文の構築に必要な値を取得する
-#     :param book_data: 書籍データの辞書
-#     :return: SQL文の構築に必要な値
-#     """
-#     data = (
-#         book_data["title"],
-#         book_data["category_id"],
-#         book_data["status_id"],
-#         book_data["memo"],
-#         book_data["purchase_date"],
-#         book_data["read_date"],
-#     )
-
-#     return data
-
-
 def create_pagination(page, all_count):
     """ページネーションの情報を作成する
     :param page: 現在のページ番号
@@ -219,10 +202,6 @@ def new_book(book=None):
     if request.method == "GET":
         return render_template(
             "books/form.html",
-            # status_id="",
-            # category_id="",
-            # status_choices=get_status_choices(),
-            # category_choices=get_category_choices(),
             mode="create",
             book=book,
         )
