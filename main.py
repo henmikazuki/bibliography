@@ -1,5 +1,9 @@
 from flask import Flask, render_template, redirect, request, flash
 from db import (
+    get_category_choices,
+    get_category_id_by_name,
+    get_status_choices,
+    get_status_id_by_name,
     get_total_count,
     get_filtered_books,
     get_book_detail,
@@ -14,7 +18,6 @@ app = Flask(__name__)
 app.secret_key = "secret_key"
 app.teardown_appcontext(close_db)
 
-STATUS_CHOICES = ["未読", "読書中", "読了", "破棄"]
 PER_PAGE = 10
 
 
@@ -24,7 +27,7 @@ def is_not_empty_required_fields(book_data):
     :param book_data: 書籍データの辞書
     :return: 必須項目が空でない場合はTrue、空の場合はFalse
     """
-    required_fields = ["title", "category", "status"]
+    required_fields = ["title", "category_id", "status_id"]
     for field in required_fields:
         if not book_data.get(field):
             return False
@@ -78,7 +81,9 @@ def get_book_form_data(form):
     """
     return {
         "title": form.get("title", ""),
+        "category_id": get_category_id_by_name(form.get("category", "")),
         "category": form.get("category", ""),
+        "status_id": get_status_id_by_name(form.get("status", "")),
         "status": form.get("status", ""),
         "memo": form.get("memo", ""),
         "purchase_date": form.get("purchase_date", ""),
@@ -86,21 +91,21 @@ def get_book_form_data(form):
     }
 
 
-def sql_statement_construction(book_data):
-    """SQL文の構築に必要な値を取得する
-    :param book_data: 書籍データの辞書
-    :return: SQL文の構築に必要な値
-    """
-    data = (
-        book_data["title"],
-        book_data["category"],
-        book_data["status"],
-        book_data["memo"],
-        book_data["purchase_date"],
-        book_data["read_date"],
-    )
+# def sql_statement_construction(book_data):
+#     """SQL文の構築に必要な値を取得する
+#     :param book_data: 書籍データの辞書
+#     :return: SQL文の構築に必要な値
+#     """
+#     data = (
+#         book_data["title"],
+#         book_data["category_id"],
+#         book_data["status_id"],
+#         book_data["memo"],
+#         book_data["purchase_date"],
+#         book_data["read_date"],
+#     )
 
-    return data
+#     return data
 
 
 def create_pagination(page, all_count):
@@ -135,12 +140,12 @@ def books():
     all_count = get_total_count()  # フィルタなし件数
 
     if status:
-        filters.append("status = ?")
+        filters.append("b.status_id = ?")
         params.append(status)
 
     # MEMO: 将来的にカテゴリーでの絞り込みを追加する場合は、以下のコメントアウトを解除して使用する
     # if category:
-    #     filters.append("category = ?")
+    #     filters.append("category_id = ?")
     #     params.append(category)
 
     filter_sql = ""
@@ -197,7 +202,6 @@ def new_book(book=None):
             return render_template(
                 "books/form.html",
                 book=book_data,
-                status_choices=STATUS_CHOICES,
                 mode="create",
             )
 
@@ -208,7 +212,6 @@ def new_book(book=None):
             return render_template(
                 "books/form.html",
                 book=book_data,
-                status_choices=STATUS_CHOICES,
                 mode="create",
             )
         return render_template("books/confirm.html", book_data=book_data, mode="create")
@@ -216,7 +219,10 @@ def new_book(book=None):
     if request.method == "GET":
         return render_template(
             "books/form.html",
-            status_choices=STATUS_CHOICES,
+            # status_id="",
+            # category_id="",
+            # status_choices=get_status_choices(),
+            # category_choices=get_category_choices(),
             mode="create",
             book=book,
         )
@@ -239,6 +245,7 @@ def confirm_new_book():
 def edit_book(book_id):
     if request.method == "POST":
         book_data = get_book_form_data(request.form)
+        print(book_data)
         if not is_not_empty_required_fields(book_data):
             flash("タイトル、カテゴリー、ステータスは必須項目です。", "danger")
             return redirect(f"/books/{book_id}/edit")
@@ -249,7 +256,11 @@ def edit_book(book_id):
     if request.method == "GET":
         book = get_book_detail(book_id)
         return render_template(
-            "books/form.html", book=book, status_choices=STATUS_CHOICES, mode="update"
+            "books/form.html",
+            book=book,
+            status_choices=get_status_choices(),
+            category_choices=get_category_choices(),
+            mode="update",
         )
 
 

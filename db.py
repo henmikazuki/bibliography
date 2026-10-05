@@ -11,6 +11,7 @@ def get_db():
     """
     if "db" not in g:
         g.db = sqlite3.connect(DATABASE)
+        g.db.execute("PRAGMA foreign_keys = ON")
         g.db.row_factory = sqlite3.Row
     return g.db
 
@@ -21,6 +22,54 @@ def close_db(e=None):
 
     if db is not None:
         db.close()
+
+
+def get_category_choices():
+    """カテゴリーの選択肢を取得する
+
+    :return: カテゴリーのリスト
+    """
+    sql = "SELECT category FROM categories WHERE deleted = 0"
+
+    with get_db() as conn:
+        return [row["category"] for row in conn.execute(sql).fetchall()]
+
+
+def get_category_id_by_name(category):
+    """カテゴリー名からカテゴリーIDを取得する
+
+    :param category: カテゴリー名
+    :return: カテゴリーID
+    """
+    sql = "SELECT id FROM categories WHERE category = ? AND deleted = 0"
+
+    with get_db() as conn:
+        row = conn.execute(sql, (category,)).fetchone()
+        return row["id"] if row else None
+
+
+def get_status_id_by_name(status):
+    """ステータス名からステータスIDを取得する
+
+    :param status: ステータス名
+    :return: ステータスID
+    """
+    sql = "SELECT id FROM statuses WHERE status = ?"
+
+    with get_db() as conn:
+        row = conn.execute(sql, (status,)).fetchone()
+        return row["id"] if row else None
+
+
+def get_status_choices():
+    """ステータスの選択肢を取得する
+
+    :return: ステータスのリスト
+    """
+    sql = "SELECT status FROM statuses"
+
+    with get_db() as conn:
+        return [row["status"] for row in conn.execute(sql).fetchall()]
 
 
 def get_total_count():
@@ -42,7 +91,8 @@ def get_filtered_books(filter, params, order="DESC", per_page=5, offset=0):
     :param offset: 取得開始位置
     :return: 書籍データのリスト, フィルタ後の件数
     """
-    filter_sql = f"""SELECT * FROM books WHERE deleted = 0 {filter}
+    filter_sql = f"""SELECT * FROM books b JOIN categories c ON b.category_id = c.id 
+    JOIN statuses s ON b.status_id = s.id WHERE b.deleted = 0 {filter}
     ORDER BY created_at {order} LIMIT {per_page} OFFSET {offset}"""
 
     count_sql = f"""SELECT COUNT(*) FROM books WHERE deleted = 0 {filter}"""
@@ -60,8 +110,9 @@ def get_book_detail(book_id):
     :return: 書籍データの辞書
     """
     sql = (
-        "SELECT id, title, category, status, memo, purchase_date, read_date "
-        "FROM books WHERE id = ? AND deleted = 0"
+        "SELECT b.id, b.title, c.category, s.status, b.memo, b.purchase_date, "
+        "b.read_date FROM books b JOIN categories c ON b.category_id = c.id "
+        "JOIN statuses s ON b.status_id = s.id WHERE b.id = ? AND b.deleted = 0"
     )
 
     with get_db() as conn:
@@ -73,15 +124,15 @@ def append_book_data(book_data):
     :param book_data: 書籍データの辞書
     """
     sql = (
-        "INSERT INTO books (title, category, status, memo, purchase_date, "
+        "INSERT INTO books (title, category_id, status_id, memo, purchase_date, "
         "read_date, deleted, created_at, updated_at) "
         "VALUES (?, ?, ?, ?, ?, ?, 0, "
         'datetime("now", "localtime"), datetime("now", "localtime"))'
     )
     data = (
         book_data["title"],
-        book_data["category"],
-        book_data["status"],
+        book_data["category_id"],
+        book_data["status_id"],
         book_data["memo"],
         book_data["purchase_date"] if book_data["purchase_date"] else None,
         book_data["read_date"] if book_data["read_date"] else None,
@@ -96,15 +147,16 @@ def update_book_data(book_id, book_data):
     :param book_id: 書籍ID
     :param book_data: 書籍データの辞書
     """
+    print(book_data)
     sql = (
-        "UPDATE books SET title = ?, category = ?, status = ?, memo = ?, "
+        "UPDATE books SET title = ?, category_id = ?, status_id = ?, memo = ?, "
         "purchase_date = ?, read_date = ?, updated_at = "
         'datetime("now", "localtime") WHERE id = ?'
     )
     data = (
         book_data["title"],
-        book_data["category"],
-        book_data["status"],
+        book_data["category_id"],
+        book_data["status_id"],
         book_data["memo"],
         book_data["purchase_date"] if book_data["purchase_date"] else None,
         book_data["read_date"] if book_data["read_date"] else None,

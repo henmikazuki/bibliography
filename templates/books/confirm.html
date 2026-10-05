@@ -27,6 +27,8 @@ block content %} {% if mode == "create" %}
   <form action="/books/{{ book_id }}/edit/confirm" method="post">
     {% endif %}
     <input type="hidden" name="title" value="{{ book_data['title'] }}" />
+    <input type="hidden" name="category_id" value="{{ book_data['category_id'] }}" />
+    <input type="hidden" name="status_id" value="{{ book_data['status_id'] }}" />
     <input type="hidden" name="category" value="{{ book_data['category'] }}" />
     <input type="hidden" name="status" value="{{ book_data['status'] }}" />
     <input
